@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Objetos</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Gerenciamento de Objetos</h1>
+
+    <p><a href="{{ url_for('index') }}">Voltar ao início</a></p>
+
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+            <p>{{ mensagem }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <h2>Cadastrar objeto</h2>
+
+    <form method="POST" action="{{ url_for('objetos') }}">
+        <label>Nome:</label>
+        <input type="text" name="nome" required>
+
+        <label>Descrição:</label>
+        <input type="text" name="descricao">
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Objetos cadastrados</h2>
+
+    {% if objetos %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>
+
+            {% for objeto in objetos %}
+            <tr>
+                <td>{{ objeto.id }}</td>
+                <td>{{ objeto.nome }}</td>
+                <td>{{ objeto.descricao or '' }}</td>
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('editar_objeto', id=objeto.id) }}">
+                        <input type="text" name="nome"
+                               value="{{ objeto.nome }}" required>
+                        <input type="text" name="descricao"
+                               value="{{ objeto.descricao or '' }}">
+                        <button type="submit">Editar</button>
+                    </form>
+
+                    <form method="POST"
+                          action="{{ url_for('excluir_objeto', id=objeto.id) }}">
+                        <button type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Nenhum objeto cadastrado.</p>
+    {% endif %}
+
+</body>
+</html>

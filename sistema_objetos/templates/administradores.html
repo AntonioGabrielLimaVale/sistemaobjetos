@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Administradores</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Gerenciamento de Administradores</h1>
+
+    <p>
+        <a href="{{ url_for('index') }}">Início</a> |
+        <a href="{{ url_for('logout') }}">Sair</a>
+    </p>
+
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+            <p>{{ mensagem }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <h2>Cadastrar administrador</h2>
+
+    <form method="POST">
+        <label>Usuário:</label>
+        <input type="text" name="usuario" required>
+
+        <label>Senha:</label>
+        <input type="password" name="senha" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Administradores cadastrados</h2>
+
+    {% if administradores %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Usuário</th>
+                <th>Ações</th>
+            </tr>
+
+            {% for administrador in administradores %}
+            <tr>
+                <td>{{ administrador.id }}</td>
+                <td>{{ administrador.usuario }}</td>
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('editar_administrador', id=administrador.id) }}">
+                        <input type="text" name="usuario"
+                               value="{{ administrador.usuario }}" required>
+                        <input type="password" name="senha"
+                               placeholder="Nova senha (opcional)">
+                        <button type="submit">Editar</button>
+                    </form>
+
+                    <form method="POST"
+                          action="{{ url_for('excluir_administrador', id=administrador.id) }}">
+                        <button type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Nenhum administrador cadastrado.</p>
+    {% endif %}
+
+</body>
+</html>
